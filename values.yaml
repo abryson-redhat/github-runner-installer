@@ -1,0 +1,123 @@
+#appName: actions-runner
+appName: actions-runner-java
+
+#####
+## NOTE:  some of these values are overridden by install_runner.sh script
+#####
+#
+#runnerImage: quay.io/redhat-github-actions/runner
+runnerImage: quay.io/redhat-github-actions/java-runner-11
+#runnerTag: v1
+runnerTag: latest
+
+# GitHub organization or user. Required.
+# If githubRepository is set, this must be the organization or user who owns that repository.
+githubOwner: "abryson-redhat"
+# GitHub repository to install runners to. Can be omitted for an organization-level runner.
+githubRepository: ""
+# If you're using GitHub Enterprise, enter your company domain here.
+# eg. github.mycompany.com
+githubDomain: ""
+
+### Values for PAT Auth
+### Refer to https://github.com/redhat-actions/openshift-actions-runners#pat-guidelines
+
+# The name of the k8s secret to create for PAT auth
+secretName: "github-pat"
+# The name of the key that points to the data within the secret.
+# Modify this to store multiple PATs in one secret.
+secretKey: "github-pat"
+# The PAT itself - must be set if the secret is being created.
+# test - githubPat:
+
+### End PAT Auth
+
+### Values for GitHub App Auth
+### Refer to https://github.com/redhat-actions/openshift-actions-runners/blob/main/docs/github-app-authentication.md
+
+# The name of the k8s secret to create for GitHub App Auth
+appSecretName: "github-app"
+# The name of the key that points to the Github App ID
+appIdSecretKey: "github-app-id"
+# The name of the key that points to the Github App Install ID
+appInstallIdSecretKey: "github-install-id"
+# The name of the key that points to the Github App PEM
+appPemSecretKey: "github-pem"
+## All 3 githubApp values are required
+#githubAppId: ""
+#githubAppInstallId: ""
+#githubAppPem: 
+
+
+### End App Auth
+
+# Pass labels using array syntax, which is curly braces surrounding comma-separated items.
+# --set runnerLabels="{ label1, label2 }" results in the labels "label1" and "label2".
+runnerLabels: 
+  - java
+
+# The name of an organization runner group name to attach the runner to
+runnerGroup: ""
+
+# Add annotations to the deployment. This is easist with a values file but can be done on the command line with:
+# --set annotations.<key>=<value> is equivalent to the values file:
+# annotations:
+#   key: value
+annotations: {}
+
+# Refer to https://docs.openshift.com/container-platform/4.7/nodes/scheduling/nodes-scheduler-node-selectors.html
+# Add nodeSelector to the deployment. This is easiest with a values file but can be done on the command line with:
+# --set nodeSelector.<key>=<value> is equivalent to the values file:
+# nodeSelector:
+#   key: value
+nodeSelector: {}
+
+# Private registries may require keys to read images from them. Specifying
+# ImagePullSecrets on a Pod is the recommended approach to run containers based
+# on images in private registries.
+imagePullSecrets: {}
+
+# Add affinity to the deployment. This is easist with a values file
+# Refer to https://docs.openshift.com/container-platform/4.7/nodes/scheduling/nodes-scheduler-node-affinity.html
+affinity: {}
+
+# Adjust replicas depending on your resources available,
+# and how many jobs you want to run concurrently.
+replicas: 1
+
+# If these should be registered as ephemeral runners
+# i.e. will quit and restart after running one job
+ephemeral: false
+
+serviceAccountName: default
+
+# Adjust requests and limits depending on your resources,
+# and how heavyweight your workloads are.
+memoryRequest: "512Mi"
+memoryLimit: "1Gi"
+cpuRequest: "100m"
+cpuLimit: "250m"
+
+# Enable custom cluster PKI loading
+# https://docs.openshift.com/container-platform/4.6/networking/configuring-a-custom-pki.html
+clusterPKI: false
+
+# You can inject arbitrary environment variables here:
+runnerEnv:
+    # - name: ENV_VAR
+    #   value: env_value
+    # or, through the command line:
+    # --set runnerEnv[0].name="ENV_VAR" --set runnerEnv[0].value="env_value"
+
+    ## Proxy Configuration Example:
+    # - name: https_proxy
+    #   value: http://proxy.example.com:9000
+    # - name: http_proxy
+    #   value: http://proxy.example.com:9000
+    # - name: no_proxy
+    #   value: localhost
+persistence:
+  enabled: true
+  name: github-workspace-data
+  storageSize: 2Gi
+  accessMode: ReadWriteOnce

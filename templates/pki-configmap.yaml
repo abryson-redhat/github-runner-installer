@@ -1,0 +1,15 @@
+# Enable custom cluster PKI
+# https://docs.openshift.com/container-platform/4.6/networking/configuring-a-custom-pki.html
+{{- if .Values.clusterPKI }}
+{{- if not (lookup "v1" "ConfigMap" .Release.Namespace "trusted-ca" ) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trusted-ca
+  labels:
+    config.openshift.io/inject-trusted-cabundle: "true"
+  annotations:
+    # add annotation to keep the object
+    helm.sh/resource-policy: keep
+{{- end }}
+{{- end }}
